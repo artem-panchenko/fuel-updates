@@ -20,8 +20,8 @@ import subprocess
 import zlib
 
 from optparse import OptionParser
-from urllib2 import urlopen
 from urllib2 import HTTPError
+from urllib2 import urlopen
 from urlparse import urlparse
 from xml.dom.minidom import parseString
 
@@ -86,10 +86,12 @@ def mirror_remote_repository(remote_repo_url, local_repo_path):
     repo_url = urlparse(remote_repo_url)
     cut_dirs = len(repo_url.path.strip('/').split('/'))
     download_cmd = ('wget --recursive --no-parent --no-verbose --reject "index'
-                    '.html*,*.gif" --exclude-directories "{pwd}/repocache" '
-                    '--directory-prefix {path} -nH --cut-dirs={cutd} {url}').\
-        format(pwd=repo_url.path.rstrip('/'), path=local_repo_path,
-               cutd=cut_dirs, url=repo_url.geturl())
+                    '.html*,*.gif,*.key,*.gpg" --exclude-directories "{pwd}/re'
+                    'pocache" --directory-prefix {path} -nH --cut-dirs={cutd} '
+                    '{url}').format(pwd=repo_url.path.rstrip('/'),
+                                    path=local_repo_path,
+                                    cutd=cut_dirs,
+                                    url=repo_url.geturl())
     if exec_cmd(download_cmd) != 0:
         raise UpdatePackagesException('Mirroring of remote packages'
                                       ' repository failed!')
